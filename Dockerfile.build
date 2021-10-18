@@ -1,0 +1,25 @@
+#
+# This Dockerfile produces an image that can be used to build headless-gl.
+#
+
+FROM ubuntu:focal-20211006
+
+RUN apt-get update && \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y \
+	curl
+
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+	build-essential \
+	nodejs \
+	python \
+	pkg-config \
+	libx11-6 \
+	libx11-dev \
+	libxi6 \
+	libxi-dev \
+	libglx-mesa0 \
+	libglx-dev \
+	libglew-dev \
+	libegl1-mesa-dev \
