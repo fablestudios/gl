@@ -13,6 +13,7 @@
   },
   "scripts": {
     "test": "standard | snazzy && tape test/*.js | faucet",
+    "build": "node-gyp build",
     "rebuild": "node-gyp rebuild --verbose",
     "prebuild": "prebuild --all --strip",
     "install": "prebuild-install || node-gyp rebuild"
@@ -31,6 +32,7 @@
     "bunny": "^1.0.1",
     "faucet": "0.0.1",
     "gl-conformance": "^2.0.9",
+    "log4js": "^6.3.0",
     "prebuild": "^10.0.1",
     "snazzy": "^8.0.0",
     "standard": "^14.3.4",

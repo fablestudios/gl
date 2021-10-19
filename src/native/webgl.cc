@@ -9,11 +9,8 @@ EGLDisplay             WebGLRenderingContext::DISPLAY;
 WebGLRenderingContext* WebGLRenderingContext::ACTIVE = NULL;
 WebGLRenderingContext* WebGLRenderingContext::CONTEXT_LIST_HEAD = NULL;
 
-const char* REQUIRED_EXTENSIONS[] = {
-  "GL_OES_packed_depth_stencil",
-  "GL_ANGLE_instanced_arrays",
-  NULL
-};
+const char* REQUIRED_PACKED_DEPTH_EXTENSION = "GL_OES_packed_depth_stencil";
+const char* REQUIRED_INSTANCED_DRAW_EXTENSIONS[] = {"GL_ANGLE_instanced_arrays", "GL_NV_draw_instanced", NULL};
 
 #define GL_METHOD(method_name) NAN_METHOD(WebGLRenderingContext:: method_name)
 
@@ -129,8 +126,20 @@ WebGLRenderingContext::WebGLRenderingContext(
   const char *extensionString = (const char*)((glGetString)(GL_EXTENSIONS));
 
   //Load required extensions
-  for(const char** rext = REQUIRED_EXTENSIONS; *rext; ++rext) {
-    if(!strstr(extensionString, *rext)) {
+  if (!strstr(extensionString, REQUIRED_PACKED_DEPTH_EXTENSION)) {
+      dispose();
+      state = GLCONTEXT_STATE_ERROR;
+      return;
+  }
+  {
+    bool foundInstancedDraw = false;
+    for(const char** impls = REQUIRED_INSTANCED_DRAW_EXTENSIONS; *impls; ++impls) {
+      if(strstr(extensionString, *impls)) {
+        foundInstancedDraw = true;
+        break;
+      }
+    }
+    if (!foundInstancedDraw) {
       dispose();
       state = GLCONTEXT_STATE_ERROR;
       return;
