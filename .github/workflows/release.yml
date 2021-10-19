@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update && \
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            build-essential \
+            nodejs \
+            python \
+            pkg-config \
+            libx11-6 \
+            libx11-dev \
+            libxi6 \
+            libxi-dev \
+            libglx-mesa0 \
+            libglx-dev \
+            libglew-dev \
+            libegl1-mesa-dev
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: npm
+      - name: Install package
+        run: npm install
+        # This will also cause our "install" script to run, building the gl package
+      - name: Build and publish binaries
+        run: |
+          npx prebuild -t 14.0.0 -t 16.0.0 --strip --upload ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish package
+        run: npm publish --access public
+        env: 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
