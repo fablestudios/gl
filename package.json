@@ -3,6 +3,7 @@
   "version": "4.9.3-beta.1",
   "description": "Creates a WebGL context without a window",
   "main": "index.js",
+  "types": "index.d.ts",
   "directories": {
     "test": "test"
   },
