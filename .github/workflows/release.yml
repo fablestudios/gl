@@ -41,6 +41,8 @@ jobs:
         run: |
           npx prebuild -t 14.0.0 -t 16.0.0 --strip --upload ${{ secrets.GITHUB_TOKEN }}
       - name: Publish package
-        run: npm publish --access public
+        run: |
+          echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc && \
+          npm publish --access public
         env: 
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
