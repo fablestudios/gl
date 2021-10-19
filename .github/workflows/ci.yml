@@ -7,34 +7,23 @@ on:
 
 jobs:
   build:
-    name: Build (Node ${{ matrix.node }})
-    runs-on: ubuntu-latest
+    name: Build (Node ${{ matrix.node }} on ${{ matrix.runner }})
     strategy:
       matrix:
         node:
           - '14'
           - '16'
+        runner:
+          - ubuntu-20.04
+          - macos-11
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
           submodules: 'true'
       - name: Install system dependencies
-        run: |
-          sudo apt-get update && \
-            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-            build-essential \
-            nodejs \
-            python \
-            pkg-config \
-            libx11-6 \
-            libx11-dev \
-            libxi6 \
-            libxi-dev \
-            libglx-mesa0 \
-            libglx-dev \
-            libglew-dev \
-            libegl1-mesa-dev
+        run: scripts/install-dependencies.sh
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
