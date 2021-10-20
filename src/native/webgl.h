@@ -281,7 +281,8 @@ struct WebGLRenderingContext : public node::ObjectWrap {
   static NAN_METHOD(DeleteVertexArrayOES);
   static NAN_METHOD(IsVertexArrayOES);
 
-  void initPointers(GLInstancedDrawingExtension idx);
+  void initPointers();
+  void initExtensionPointers(GLInstancedDrawingExtension idx);
 
   #include "procs.h"
 };

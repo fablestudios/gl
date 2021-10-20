@@ -143,6 +143,9 @@ WebGLRenderingContext::WebGLRenderingContext(
   registerContext();
   ACTIVE = this;
 
+  //Initialize function pointers
+  initPointers();
+
   //Check extensions
   const char *extensionString = (const char*)((glGetString)(GL_EXTENSIONS));
 
@@ -166,8 +169,7 @@ WebGLRenderingContext::WebGLRenderingContext(
     return;
   }
 
-  //Initialize function pointers
-  initPointers(idx);
+  initExtensionPointers(idx);
 
   //Select best preferred depth
   preferredDepth = GL_DEPTH_COMPONENT16;
