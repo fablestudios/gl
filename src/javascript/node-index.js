@@ -34,23 +34,17 @@ function createContext (width, height, options) {
   contextAttributes.premultipliedAlpha =
     contextAttributes.premultipliedAlpha && contextAttributes.alpha
 
-  let ctx
-  try {
-    ctx = new WebGLRenderingContext(
-      1,
-      1,
-      contextAttributes.alpha,
-      contextAttributes.depth,
-      contextAttributes.stencil,
-      contextAttributes.antialias,
-      contextAttributes.premultipliedAlpha,
-      contextAttributes.preserveDrawingBuffer,
-      contextAttributes.preferLowPowerToHighPerformance,
-      contextAttributes.failIfMajorPerformanceCaveat)
-  } catch (e) {}
-  if (!ctx) {
-    return null
-  }
+  const ctx = new WebGLRenderingContext(
+    1,
+    1,
+    contextAttributes.alpha,
+    contextAttributes.depth,
+    contextAttributes.stencil,
+    contextAttributes.antialias,
+    contextAttributes.premultipliedAlpha,
+    contextAttributes.preserveDrawingBuffer,
+    contextAttributes.preferLowPowerToHighPerformance,
+    contextAttributes.failIfMajorPerformanceCaveat);
 
   ctx.drawingBufferWidth = width
   ctx.drawingBufferHeight = height
