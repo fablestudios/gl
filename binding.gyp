@@ -27,9 +27,12 @@
       ],
       'conditions': [
         ['OS=="mac"', {
+            'dependencies':
+            [
+              'angle/src/angle.gyp:libEGL',
+              'angle/src/angle.gyp:libGLESv2'
+            ],
             'libraries': [
-                '-lGLESv2',
-                '-lEGL',
                 '-framework QuartzCore',
                 '-framework Quartz'
             ],
