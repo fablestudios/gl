@@ -43,7 +43,9 @@ struct WebGLRenderingContext : public node::ObjectWrap {
   EGLContext context;
   EGLConfig  config;
   EGLSurface surface;
+
   GLContextState  state;
+  const char* state_message;
 
   //Pixel storage flags
   bool  unpack_flip_y;

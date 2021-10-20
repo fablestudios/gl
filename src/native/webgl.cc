@@ -12,6 +12,15 @@ WebGLRenderingContext* WebGLRenderingContext::CONTEXT_LIST_HEAD = NULL;
 const char* REQUIRED_PACKED_DEPTH_EXTENSION = "GL_OES_packed_depth_stencil";
 const char* REQUIRED_INSTANCED_DRAW_EXTENSIONS[] = {"GL_ANGLE_instanced_arrays", "GL_NV_draw_instanced", NULL};
 
+const char* ERROR_EGL_GET_DISPLAY = "eglGetDisplay(EGL_DEFAULT_DISPLAY) failed";
+const char* ERROR_EGL_INITIALIZE = "eglInitialize() failed";
+const char* ERROR_EGL_CHOOSE_CONFIG = "eglChooseConfig() failed";
+const char* ERROR_EGL_CREATE_CONTEXT = "eglCreateContext() failed";
+const char* ERROR_EGL_CREATE_SURFACE = "eglCreatePbufferSurface() failed";
+const char* ERROR_EGL_MAKE_CURRENT = "eglMakeCurrent() failed";
+const char* ERROR_PACKED_DEPTH_EXTENSION = "extension GL_OES_packed_depth_stencil not available";
+const char* ERROR_INSTANCED_DRAW_EXTENSION = "extension GL_ANGLE_instanced_arrays or GL_NV_draw_instanced not available";
+
 #define GL_METHOD(method_name) NAN_METHOD(WebGLRenderingContext:: method_name)
 
 #define GL_BOILERPLATE  \
@@ -37,6 +46,7 @@ WebGLRenderingContext::WebGLRenderingContext(
   , bool preferLowPowerToHighPerformance
   , bool failIfMajorPerformanceCaveat) :
       state(GLCONTEXT_STATE_INIT)
+    , state_message(NULL)
     , unpack_flip_y(false)
     , unpack_premultiply_alpha(false)
     , unpack_colorspace_conversion(0x9244)
@@ -50,12 +60,14 @@ WebGLRenderingContext::WebGLRenderingContext(
     DISPLAY = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     if (DISPLAY == EGL_NO_DISPLAY) {
       state = GLCONTEXT_STATE_ERROR;
+      state_message = ERROR_EGL_GET_DISPLAY;
       return;
     }
 
     //Initialize EGL
     if (!eglInitialize(DISPLAY, NULL, NULL)) {
       state = GLCONTEXT_STATE_ERROR;
+      state_message = ERROR_EGL_INITIALIZE;
       return;
     }
 
@@ -83,6 +95,7 @@ WebGLRenderingContext::WebGLRenderingContext(
       &num_config) ||
       num_config != 1) {
     state = GLCONTEXT_STATE_ERROR;
+    state_message = ERROR_EGL_CHOOSE_CONFIG;
     return;
   }
 
@@ -94,6 +107,7 @@ WebGLRenderingContext::WebGLRenderingContext(
   context = eglCreateContext(DISPLAY, config, EGL_NO_CONTEXT, contextAttribs);
   if (context == EGL_NO_CONTEXT) {
     state = GLCONTEXT_STATE_ERROR;
+    state_message = ERROR_EGL_CREATE_CONTEXT;
     return;
   }
 
@@ -105,17 +119,20 @@ WebGLRenderingContext::WebGLRenderingContext(
   surface = eglCreatePbufferSurface(DISPLAY, config, surfaceAttribs);
   if (surface == EGL_NO_SURFACE) {
     state = GLCONTEXT_STATE_ERROR;
+    state_message = ERROR_EGL_CREATE_SURFACE;
     return;
   }
 
   //Set active
   if (!eglMakeCurrent(DISPLAY, surface, surface, context)) {
     state = GLCONTEXT_STATE_ERROR;
+    state_message = ERROR_EGL_MAKE_CURRENT;
     return;
   }
 
   //Success
   state = GLCONTEXT_STATE_OK;
+  state_message = NULL;
   registerContext();
   ACTIVE = this;
 
@@ -129,6 +146,7 @@ WebGLRenderingContext::WebGLRenderingContext(
   if (!strstr(extensionString, REQUIRED_PACKED_DEPTH_EXTENSION)) {
       dispose();
       state = GLCONTEXT_STATE_ERROR;
+      state_message = ERROR_PACKED_DEPTH_EXTENSION;
       return;
   }
   {
@@ -142,6 +160,7 @@ WebGLRenderingContext::WebGLRenderingContext(
     if (!foundInstancedDraw) {
       dispose();
       state = GLCONTEXT_STATE_ERROR;
+      state_message = ERROR_INSTANCED_DRAW_EXTENSION;
       return;
     }
   }
@@ -164,6 +183,7 @@ bool WebGLRenderingContext::setActive() {
   }
   if (!eglMakeCurrent(DISPLAY, surface, surface, context)) {
     state = GLCONTEXT_STATE_ERROR;
+    state_message = ERROR_EGL_MAKE_CURRENT;
     return false;
   }
   ACTIVE = this;
@@ -191,6 +211,7 @@ void WebGLRenderingContext::dispose() {
 
   //Update state
   state = GLCONTEXT_STATE_DESTROY;
+  state_message = NULL;
 
   //Store this pointer
   WebGLRenderingContext* inst = this;
@@ -281,7 +302,7 @@ GL_METHOD(New) {
   );
 
   if(instance->state != GLCONTEXT_STATE_OK){
-    return Nan::ThrowError("Error creating WebGLContext");
+    return Nan::ThrowError(instance->state_message != NULL ? instance->state_message : "Error creating WebGLContext");
   }
 
   instance->Wrap(info.This());
