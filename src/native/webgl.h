@@ -31,6 +31,12 @@ enum GLContextState {
   GLCONTEXT_STATE_ERROR
 };
 
+enum GLInstancedDrawingExtension {
+  GLIDX_NONE,
+  GLIDX_ANGLE,
+  GLIDX_NVIDIA
+};
+
 typedef std::pair<GLuint, GLObjectType> GLObjectReference;
 
 struct WebGLRenderingContext : public node::ObjectWrap {
@@ -275,7 +281,7 @@ struct WebGLRenderingContext : public node::ObjectWrap {
   static NAN_METHOD(DeleteVertexArrayOES);
   static NAN_METHOD(IsVertexArrayOES);
 
-  void initPointers();
+  void initPointers(GLInstancedDrawingExtension idx);
 
   #include "procs.h"
 };

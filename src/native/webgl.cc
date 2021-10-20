@@ -11,7 +11,8 @@ WebGLRenderingContext* WebGLRenderingContext::ACTIVE = NULL;
 WebGLRenderingContext* WebGLRenderingContext::CONTEXT_LIST_HEAD = NULL;
 
 const char* REQUIRED_PACKED_DEPTH_EXTENSION = "GL_OES_packed_depth_stencil";
-const char* REQUIRED_INSTANCED_DRAW_EXTENSIONS[] = {"GL_ANGLE_instanced_arrays", "GL_NV_draw_instanced", NULL};
+const char* INSTANCED_DRAW_EXTENSION_ANGLE = "GL_ANGLE_instanced_arrays";
+const char* INSTANCED_DRAW_EXTENSION_NVIDIA = "GL_NV_draw_instanced";
 
 const char* ERROR_EGL_GET_DISPLAY = "eglGetDisplay(EGL_DEFAULT_DISPLAY) failed";
 const char* ERROR_EGL_INITIALIZE = "eglInitialize() failed";
@@ -142,9 +143,6 @@ WebGLRenderingContext::WebGLRenderingContext(
   registerContext();
   ACTIVE = this;
 
-  //Initialize function pointers
-  initPointers();
-
   //Check extensions
   const char *extensionString = (const char*)((glGetString)(GL_EXTENSIONS));
 
@@ -155,21 +153,21 @@ WebGLRenderingContext::WebGLRenderingContext(
       state_message = ERROR_PACKED_DEPTH_EXTENSION;
       return;
   }
-  {
-    bool foundInstancedDraw = false;
-    for(const char** impls = REQUIRED_INSTANCED_DRAW_EXTENSIONS; *impls; ++impls) {
-      if(strstr(extensionString, *impls)) {
-        foundInstancedDraw = true;
-        break;
-      }
-    }
-    if (!foundInstancedDraw) {
-      dispose();
-      state = GLCONTEXT_STATE_ERROR;
-      state_message = ERROR_INSTANCED_DRAW_EXTENSION;
-      return;
-    }
+
+  GLInstancedDrawingExtension idx = GLIDX_NONE;
+  if (strstr(extensionString, INSTANCED_DRAW_EXTENSION_ANGLE)) {
+    idx = GLIDX_ANGLE;
+  } else if (strstr(extensionString, INSTANCED_DRAW_EXTENSION_NVIDIA)) {
+    idx = GLIDX_NVIDIA;
+  } else {
+    dispose();
+    state = GLCONTEXT_STATE_ERROR;
+    state_message = ERROR_INSTANCED_DRAW_EXTENSION;
+    return;
   }
+
+  //Initialize function pointers
+  initPointers(idx);
 
   //Select best preferred depth
   preferredDepth = GL_DEPTH_COMPONENT16;
