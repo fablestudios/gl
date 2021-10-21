@@ -1,4 +1,3 @@
-#include <cstdio>
 #include <cstring>
 #include <vector>
 #include <iostream>
@@ -65,11 +64,6 @@ WebGLRenderingContext::WebGLRenderingContext(
       state_message = ERROR_EGL_GET_DISPLAY;
       return;
     }
-
-    fprintf(stderr, "EGL_VENDOR:      %s\n", eglQueryString(DISPLAY, EGL_VENDOR));
-    fprintf(stderr, "EGL_VERSION:     %s\n", eglQueryString(DISPLAY, EGL_VERSION));
-    fprintf(stderr, "EGL_CLIENT_APIS: %s\n", eglQueryString(DISPLAY, EGL_CLIENT_APIS));
-    fprintf(stderr, "EGL_EXTENSIONS:  %s\n", eglQueryString(DISPLAY, EGL_EXTENSIONS));
 
     //Initialize EGL
     if (!eglInitialize(DISPLAY, NULL, NULL)) {
