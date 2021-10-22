@@ -20,7 +20,6 @@ const char* ERROR_EGL_CREATE_CONTEXT = "eglCreateContext() failed";
 const char* ERROR_EGL_CREATE_SURFACE = "eglCreatePbufferSurface() failed";
 const char* ERROR_EGL_MAKE_CURRENT = "eglMakeCurrent() failed";
 const char* ERROR_PACKED_DEPTH_EXTENSION = "extension GL_OES_packed_depth_stencil not available";
-const char* ERROR_INSTANCED_DRAW_EXTENSION = "extension GL_ANGLE_instanced_arrays or GL_NV_draw_instanced not available";
 
 #define GL_METHOD(method_name) NAN_METHOD(WebGLRenderingContext:: method_name)
 
@@ -156,12 +155,8 @@ WebGLRenderingContext::WebGLRenderingContext(
     idx = GLIDX_ANGLE;
   } else if (strstr(extensionString, INSTANCED_DRAW_EXTENSION_NVIDIA)) {
     idx = GLIDX_NVIDIA;
-  } else {
-    dispose();
-    state = GLCONTEXT_STATE_ERROR;
-    state_message = ERROR_INSTANCED_DRAW_EXTENSION;
-    return;
   }
+  // TODO: check OpenGL / OpenGL ES version
 
   initExtensionPointers(idx);
 
