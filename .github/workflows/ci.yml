@@ -29,6 +29,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-      - name: Install dependencies and build package
+      - name: Install dependencies
         run: npm install
-        # This will also cause our "install" script to run, building the gl package
+      - name: Build package
+        run: npm run rebuild
