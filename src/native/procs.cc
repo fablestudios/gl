@@ -140,5 +140,9 @@ void WebGLRenderingContext::initExtensionPointers(GLInstancedDrawingExtension id
 		glDrawArraysInstanced=reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDANGLEPROC>(eglGetProcAddress("glDrawArraysInstancedNV"));
 		glDrawElementsInstanced=reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDANGLEPROC>(eglGetProcAddress("glDrawElementsInstancedNV"));
 		glVertexAttribDivisor=reinterpret_cast<PFNGLVERTEXATTRIBDIVISORANGLEPROC>(eglGetProcAddress("glVertexAttribDivisorNV"));
+	} else {
+		glDrawArraysInstanced=reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDANGLEPROC>(eglGetProcAddress("glDrawArraysInstanced"));
+		glDrawElementsInstanced=reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDANGLEPROC>(eglGetProcAddress("glDrawElementsInstanced"));
+		glVertexAttribDivisor=reinterpret_cast<PFNGLVERTEXATTRIBDIVISORANGLEPROC>(eglGetProcAddress("glVertexAttribDivisor"));
 	}
 }
