@@ -7,15 +7,18 @@ on:
 
 jobs:
   build:
-    name: Build (Node ${{ matrix.node }} on ${{ matrix.runner }})
+    name: Build (Node ${{ matrix.node }} on ${{ matrix.runner }}-${{ matrix.arch }})
     strategy:
       matrix:
-        node:
-          - '14'
-          - '16'
         runner:
           - ubuntu-20.04
           - macos-11
+        node:
+          - '14'
+          - '16'
+        arch:
+          - 'x64'
+          - 'arm64'
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
@@ -32,4 +35,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build package
-        run: npm run rebuild
+        run: npm run rebuild -- --arch=${{ matrix.arch }}
