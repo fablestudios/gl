@@ -61,6 +61,6 @@
     "module_name": "gl",
     "module_path": "./build/Release/webgl.node",
     "host": "https://github.com/fablestudios/headless-gl/releases/download/",
-    "remote_path": "{version}"
+    "remote_path": "v{version}"
   }
 }
