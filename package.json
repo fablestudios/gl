@@ -15,7 +15,7 @@
     "test": "standard | snazzy && tape test/*.js | faucet",
     "build": "node-gyp build",
     "rebuild": "node-gyp rebuild --verbose",
-    "install": "node-pre-gyp install --fallback-to-build"
+    "install": "node-pre-gyp install || true"
   },
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.7",
