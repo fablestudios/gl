@@ -16,15 +16,17 @@
     "build": "node-gyp build",
     "rebuild": "node-gyp rebuild --verbose",
     "prebuild": "prebuild --all --strip",
-    "install": "prebuild-install || true"
+    "install": "node-pre-gyp install --fallback-to-build"
   },
   "dependencies": {
+    "@mapbox/node-pre-gyp": "^1.0.7",
     "bindings": "^1.5.0",
     "bit-twiddle": "^1.0.2",
     "glsl-tokenizer": "^2.0.2",
     "nan": "^2.15.0",
     "node-abi": "^2.30.1",
     "node-gyp": "^7.1.2",
+    "node-pre-gyp-github": "^1.4.3",
     "prebuild-install": "^5.3.6"
   },
   "devDependencies": {
@@ -55,5 +57,11 @@
     "Fable (https://fable.app)"
   ],
   "license": "BSD-2-Clause",
-  "gypfile": true
+  "gypfile": true,
+  "binary": {
+    "module_name": "gl",
+    "module_path": "./build/Release/webgl.node",
+    "host": "https://github.com/fablestudios/headless-gl/releases/download/",
+    "remote_path": "{version}"
+  }
 }
