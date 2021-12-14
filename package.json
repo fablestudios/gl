@@ -15,7 +15,6 @@
     "test": "standard | snazzy && tape test/*.js | faucet",
     "build": "node-gyp build",
     "rebuild": "node-gyp rebuild --verbose",
-    "prebuild": "prebuild --all --strip",
     "install": "node-pre-gyp install --fallback-to-build"
   },
   "dependencies": {

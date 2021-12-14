@@ -43,7 +43,7 @@ jobs:
           node-pre-gyp package
           node-pre-gyp-github publish --release
       - name: Publish package
-        if: runner.os == 'Linux'
+        if: ${{ runner.os == 'Linux' && matrix.node == '14' && matrix.arch == 'x64' }}
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc && \
           npm publish --access public
