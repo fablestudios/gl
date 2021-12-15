@@ -11,18 +11,15 @@ concurrency:
   cancel-in-progress: true
 jobs:
   bindings:
-    name: Build (${{ matrix.platform }}-node${{ matrix.node }}-${{ matrix.arch }})
+    name: ${{ matrix.runner }}-node${{ matrix.node }}-${{ matrix.arch }}
     strategy:
       matrix:
         runner:
           - ubuntu-20.04
+          - macos-latest
         node:
           - '14'
           - '16'
-        platform:
-          - 'darwin'
-          - 'linux'
-          - 'win32'
         arch:
           - 'x64'
           - 'arm64'
@@ -50,7 +47,8 @@ jobs:
         # This will also cause our "install" script to run, building the gl package
       - name: Build binaries
         run: |
-          ./node_modules/.bin/node-pre-gyp configure build package --target_platform=${{matrix.platform}} --target_arch=${{ matrix.arch}}
+          ./node_modules/.bin/node-gyp rebuild --arch=${{ matrix.arch }}
+          ./node_modules/.bin/node-pre-gyp package --target_arch=${{ matrix.arch}}
       - name: Set artifact name
         run: |
           VERSION=$(jq -r '.version' package.json)
