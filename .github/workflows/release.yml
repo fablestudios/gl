@@ -98,7 +98,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/stage/v${{ steps.version.outputs.VERSION }}/*.tar.gz
+          files: build/stage/v${{ steps.version.outputs.VERSION }}/*/*.tar.gz
       - name: Publish package
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc && \
