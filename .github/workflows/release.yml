@@ -11,15 +11,18 @@ concurrency:
   cancel-in-progress: true
 jobs:
   bindings:
-    name: Build (${{ matrix.runner }}-node${{ matrix.node }}-${{ matrix.arch }})
+    name: Build (${{ matrix.platform }}-node${{ matrix.node }}-${{ matrix.arch }})
     strategy:
       matrix:
         runner:
           - ubuntu-20.04
-          - macos-11
         node:
           - '14'
           - '16'
+        platform:
+          - 'darwin'
+          - 'linux'
+          - 'win32'
         arch:
           - 'x64'
           - 'arm64'
@@ -47,9 +50,7 @@ jobs:
         # This will also cause our "install" script to run, building the gl package
       - name: Build binaries
         run: |
-          npx node-pre-gyp configure
-          npx node-pre-gyp build --target_arch=${{ matrix.arch }}
-          npx node-pre-gyp package
+          ./node_modules/.bin/node-pre-gyp configure build package --target_platform=${{matrix.platform}} --target_arch=${{ matrix.arch}}
       - name: Set artifact name
         run: |
           VERSION=$(jq -r '.version' package.json)
@@ -97,7 +98,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/stage/{{ $steps.version.outputs.VERSION }}/*
+          files: build/stage/${{ steps.version.outputs.VERSION }}/*
       - name: Publish package
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc && \
