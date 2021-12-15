@@ -1,12 +1,17 @@
-name: Release
-
+name: Build
 on:
   push:
-    tags: ['v*']
-
+    # A tag allows the final publish job
+    tags:
+      - 'v*'
+    # Matrix will run on tag and PR
+  pull_request:
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  publish_binaries:
-    name: Publish Binaries (${{ matrix.runner }})
+  bindings:
+    name: Build (${{ matrix.runner }}-node${{ matrix.node }}-${{ matrix.arch }})
     strategy:
       matrix:
         runner:
@@ -31,6 +36,12 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
+      - name: Override version with tag
+        # Don't worry about this for Pull Requests
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VERSION=${GITHUB_REF/refs\/tags\/v/}
+          npm --no-git-tag-version version $VERSION
       - name: Install package
         run: npm install
         # This will also cause our "install" script to run, building the gl package
@@ -39,14 +50,21 @@ jobs:
           npx node-pre-gyp configure
           npx node-pre-gyp build --target_arch=${{ matrix.arch }}
           npx node-pre-gyp package
+      - name: Set artifact name
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "::set-output name=VERSION::$VERSION"
+          echo "::set-output name=NAME::$(ls build/stage/v$VERSION/. | head -n 1)"
+        id: binding
       - uses: actions/upload-artifact@v2
         with:
-          name: binary ${{matrix.node}} ${{matrix.runner}} ${{matrix.arch}}
-          path: build/stage/
-  publish_npm:
+          name: ${{ steps.binding.outputs.NAME }}
+          path: build/stage/v${{ steps.binding.outputs.VERSION }}/${{ steps.binding.outputs.NAME }}
+  publish:
     name: Publish to NPM
+    if: startsWith(github.ref, 'refs/tags/v')
     needs:
-      - publish_binaries
+      - bindings
     runs-on: ubuntu-20.04
     steps:
       # Download all binaries
@@ -61,14 +79,25 @@ jobs:
         with:
           node-version: '14'
           cache: npm
+      - name: Override version with tag
+        run: |
+          VERSION=${GITHUB_REF/refs\/tags\/v/}
+          npm --no-git-tag-version version $VERSION
       - name: Install package
         run: npm install
+      - name: Set version
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "::set-output name=VERSION::$VERSION"
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v2
-      - name: Publish binaries to github release
-        env:
-          NODE_PRE_GYP_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx node-pre-gyp-github publish --release
+        with:
+          path: build/stage/${{ steps.version.outputs.VERSION }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/stage/{{ $steps.version.outputs.VERSION }}/*
       - name: Publish package
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc && \
