@@ -34,20 +34,22 @@ jobs:
       - name: Install package
         run: npm install
         # This will also cause our "install" script to run, building the gl package
-      - name: Build and publish binaries
-        env:
-          NODE_PRE_GYP_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build binaries
         run: |
           npx node-pre-gyp configure
           npx node-pre-gyp build --target_arch=${{ matrix.arch }}
           npx node-pre-gyp package
-          npx node-pre-gyp-github publish --release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: binary ${{matrix.node}} ${{matrix.runner}} ${{matrix.arch}}
+          path: build/stage/
   publish_npm:
     name: Publish to NPM
     needs:
       - publish_binaries
     runs-on: ubuntu-20.04
     steps:
+      # Download all binaries
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
@@ -61,6 +63,12 @@ jobs:
           cache: npm
       - name: Install package
         run: npm install
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v2
+      - name: Publish binaries to github release
+        env:
+          NODE_PRE_GYP_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx node-pre-gyp-github publish --release
       - name: Publish package
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc && \
