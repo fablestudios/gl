@@ -94,11 +94,11 @@ jobs:
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v2
         with:
-          path: build/stage/${{ steps.version.outputs.VERSION }}
+          path: build/stage/v${{ steps.version.outputs.VERSION }}
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/stage/${{ steps.version.outputs.VERSION }}/*
+          files: build/stage/v${{ steps.version.outputs.VERSION }}/*.tar.gz
       - name: Publish package
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc && \
