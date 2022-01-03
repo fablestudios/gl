@@ -81,7 +81,7 @@ jobs:
       - name: Override version with tag
         run: |
           VERSION=${GITHUB_REF/refs\/tags\/v/}
-          npm --no-git-tag-version version $VERSION
+          npm --no-git-tag-version --allow-same-version version $VERSION
       - name: Install package
         run: npm install
       - name: Set version
