@@ -1,6 +1,6 @@
 {
   "name": "@fable/gl",
-  "version": "4.10.0-beta.18",
+  "version": "4.10.0-beta.19",
   "description": "Creates a WebGL context without a window",
   "main": "index.js",
   "types": "index.d.ts",
