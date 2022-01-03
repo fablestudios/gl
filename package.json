@@ -1,6 +1,6 @@
 {
   "name": "@fable/gl",
-  "version": "4.10.0-beta.20",
+  "version": "4.10.0-beta.21",
   "description": "Creates a WebGL context without a window",
   "main": "index.js",
   "types": "index.d.ts",
@@ -60,7 +60,7 @@
     "module_name": "webgl",
     "module_path": "./build/Release",
     "host": "https://github.com/fablestudios/headless-gl/releases/download/",
-    "package_name": "{module_name}-v{version}-node-{node_abi}-{platform}-{arch}.tar.gz",
+    "package_name": "{module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz",
     "remote_path": "v{version}"
   }
 }
