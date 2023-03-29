@@ -3,7 +3,7 @@ on:
   push:
     # A tag allows the final publish job
     tags:
-      - 'v*'
+      - "v*"
     # Matrix will run on tag and PR
   pull_request:
 concurrency:
@@ -15,20 +15,20 @@ jobs:
     strategy:
       matrix:
         runner:
-          - ubuntu-20.04
+          - ubuntu-22.04
           - macos-latest
         node:
-          - '14'
-          - '16'
+          - "14"
+          - "16"
         arch:
-          - 'x64'
-          - 'arm64'
+          - "x64"
+          - "arm64"
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          submodules: 'true'
+          submodules: "true"
       - name: Install system dependencies
         run: scripts/install-dependencies.sh
       - name: Setup Node.js
@@ -64,19 +64,19 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     needs:
       - bindings
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       # Download all binaries
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          submodules: 'true'
+          submodules: "true"
       - name: Install system dependencies
         run: scripts/install-dependencies.sh
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: "14"
           cache: npm
       - name: Override version with tag
         run: |
