@@ -34,7 +34,7 @@ install-deps-apt-get() {
 
   DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
-    python \
+    python2 \
     pkg-config \
     libx11-6 \
     libx11-dev \
