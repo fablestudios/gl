@@ -18,8 +18,8 @@ jobs:
           - ubuntu-22.04
           - macos-latest
         node:
-          - "14"
           - "16"
+          - "18"
         arch:
           - "x64"
           - "arm64"
@@ -76,7 +76,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14"
+          node-version: "16"
           cache: npm
       - name: Override version with tag
         run: |
