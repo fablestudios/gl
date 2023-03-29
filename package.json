@@ -1,8 +1,12 @@
 {
   "name": "@fable/gl",
-  "version": "4.10.0-beta.21",
+  "version": "4.10.0-beta.22",
   "description": "Creates a WebGL context without a window",
-  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./src": "./src",
+    "./src/javascript/webgl-rendering-context": "./src/javascript/webgl-rendering-context.js"
+  },
   "types": "index.d.ts",
   "directories": {
     "test": "test"
