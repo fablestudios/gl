@@ -43,8 +43,7 @@ jobs:
           VERSION=${GITHUB_REF/refs\/tags\/v/}
           npm --no-git-tag-version --allow-same-version version $VERSION
       - name: Install package
-        run: npm install
-        # This will also cause our "install" script to run, building the gl package
+        run: npm install --ignore-scripts
       - name: Build binaries
         run: |
           ./node_modules/.bin/node-gyp rebuild --arch=${{ matrix.arch }}
