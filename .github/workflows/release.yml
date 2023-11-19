@@ -18,8 +18,7 @@ jobs:
           - ubuntu-22.04
           - macos-latest
         node:
-          - "16"
-          - "18"
+          - "21"
         arch:
           - "x64"
           - "arm64"
